@@ -1,14 +1,15 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import LottieAnimation from "./LottieAnimation";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const [lottieData, setLottieData] = useState<any>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Check if mobile on mount and when window resizes
@@ -113,23 +114,24 @@ const Hero = () => {
               className="section-title text-3xl sm:text-4xl lg:text-5xl xl:text-6xl leading-tight opacity-0 animate-fade-in" 
               style={{ animationDelay: "0.3s" }}
             >
-              Atlas: Where Code<br className="hidden sm:inline" />Meets Motion
+              BhutanAI: Where Code<br className="hidden sm:inline" />Meets Culture
             </h1>
             
             <p 
               style={{ animationDelay: "0.5s" }} 
               className="section-subtitle mt-3 sm:mt-6 mb-4 sm:mb-8 leading-relaxed opacity-0 animate-fade-in text-gray-950 font-normal text-base sm:text-lg text-left"
             >
-              The humanoid companion that learns and adapts alongside you.
+              The sovereign AI system that learns and adapts to Bhutanese values.
             </p>
             
             <div 
               className="flex flex-col sm:flex-row gap-4 opacity-0 animate-fade-in" 
               style={{ animationDelay: "0.7s" }}
             >
-              <a 
-                href="#get-access" 
-                className="flex items-center justify-center group w-full sm:w-auto text-center" 
+              <button
+                type="button"
+                onClick={() => navigate("/chatbot")}
+                className="flex items-center justify-center group w-full sm:w-auto text-center"
                 style={{
                   backgroundColor: '#FE5C02',
                   borderRadius: '1440px',
@@ -138,13 +140,13 @@ const Hero = () => {
                   cursor: 'pointer',
                   fontSize: '14px',
                   lineHeight: '20px',
-                  padding: '16px 24px', // Slightly reduced padding for mobile
+                  padding: '16px 24px',
                   border: '1px solid white',
                 }}
               >
-                Request Access
+                Continue to Chatbot
                 <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </a>
+              </button>
             </div>
           </div>
           
@@ -164,7 +166,7 @@ const Hero = () => {
               <div className="relative transition-all duration-500 ease-out overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl">
                 <img 
                   ref={imageRef} 
-                  src="/lovable-uploads/5663820f-6c97-4492-9210-9eaa1a8dc415.png" 
+                  src="/hero-image.jpg" 
                   alt="Atlas Robot" 
                   className="w-full h-auto object-cover transition-transform duration-500 ease-out" 
                   style={{ transformStyle: 'preserve-3d' }} 

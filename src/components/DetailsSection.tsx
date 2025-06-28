@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { toast } from "sonner";
 const DetailsSection = () => {
@@ -58,7 +57,7 @@ const DetailsSection = () => {
             border: "1px solid #ECECEC"
           }}>
               <h3 className="text-lg sm:text-xl font-display mb-6 sm:mb-8">
-                Precision engineering meets adaptive intelligence
+                Precision engineering meets cultural intelligence
               </h3>
 
               <div className="space-y-4 sm:space-y-6">
@@ -70,7 +69,7 @@ const DetailsSection = () => {
                   </div>
                   <div className="flex-1">
                     <div className="p-3 rounded-lg bg-gray-50/80 backdrop-blur-sm border border-gray-100">
-                      <span className="font-semibold text-base">Height:</span> 5'8"
+                      <span className="font-semibold text-base">Languages:</span> Dzongkha
                     </div>
                   </div>
                 </div>
@@ -83,7 +82,7 @@ const DetailsSection = () => {
                   </div>
                   <div className="flex-1">
                     <div className="p-3 rounded-lg bg-gray-50/80 backdrop-blur-sm border border-gray-100">
-                      <span className="font-semibold text-base">Capacity:</span> 55lbs
+                      <span className="font-semibold text-base">Compliance:</span> 100%
                     </div>
                   </div>
                 </div>
@@ -96,7 +95,7 @@ const DetailsSection = () => {
                   </div>
                   <div className="flex-1">
                     <div className="p-3 rounded-lg bg-gray-50/80 backdrop-blur-sm border border-gray-100">
-                      <span className="font-semibold text-base">Weight:</span> 140lbs
+                      <span className="font-semibold text-base">Security:</span> Local
                     </div>
                   </div>
                 </div>
@@ -109,7 +108,7 @@ const DetailsSection = () => {
                   </div>
                   <div className="flex-1">
                     <div className="p-3 rounded-lg bg-gray-50/80 backdrop-blur-sm border border-gray-100">
-                      <span className="font-semibold text-base">Uptime:</span> 6hr
+                      <span className="font-semibold text-base">Uptime:</span> 24hr
                     </div>
                   </div>
                 </div>
@@ -122,7 +121,7 @@ const DetailsSection = () => {
                   </div>
                   <div className="flex-1">
                     <div className="p-3 rounded-lg bg-gray-50/80 backdrop-blur-sm border border-gray-100">
-                      <span className="font-semibold text-base">Movement:</span> 1.5M/S
+                      <span className="font-semibold text-base">Response:</span> 0.1S
                     </div>
                   </div>
                 </div>
