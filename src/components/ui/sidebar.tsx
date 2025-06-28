@@ -173,18 +173,30 @@ const Sidebar = React.forwardRef<
     },
     ref
   ) => {
-    const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+    const { isMobile, state, openMobile, setOpenMobile, toggleSidebar } = useSidebar()
+    const isExpanded = state === 'expanded'
 
     if (collapsible === "none") {
       return (
         <div
           className={cn(
-            "flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
+            "flex h-full w-[--sidebar-width] flex-col bg-white/20 backdrop-blur-lg border-r border-white/20 text-sidebar-foreground font-sans rounded-2xl shadow-2xl",
             className
           )}
           ref={ref}
           {...props}
         >
+          {/* Toggle button for desktop only */}
+          {isExpanded ? (
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              className="hidden md:flex items-center justify-center w-8 h-8 mt-2 ml-48 rounded-full bg-white/70 hover:bg-white/90 transition-colors border border-white/40 shadow text-pulse-600"
+              aria-label="Toggle sidebar"
+            >
+              <PanelLeft className={`transition-transform ${state === 'collapsed' ? 'rotate-180' : ''}`} />
+            </button>
+          ) : null}
           {children}
         </div>
       )
@@ -196,10 +208,11 @@ const Sidebar = React.forwardRef<
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
-            className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+            className="w-[--sidebar-width] bg-white/20 backdrop-blur-lg border-r border-white/20 p-0 text-sidebar-foreground font-sans rounded-2xl shadow-2xl [&>button]:hidden"
             style={
               {
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
+                ...props.style,
               } as React.CSSProperties
             }
             side={side}
@@ -219,6 +232,17 @@ const Sidebar = React.forwardRef<
         data-variant={variant}
         data-side={side}
       >
+        {/* Toggle button for desktop only */}
+        {isExpanded ? (
+          <button
+            type="button"
+            onClick={toggleSidebar}
+            className="absolute top-3 left-48 z-20 hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-white/70 hover:bg-white/90 transition-colors border border-white/40 shadow text-pulse-600"
+            aria-label="Toggle sidebar"
+          >
+            <PanelLeft className={`transition-transform ${state === 'collapsed' ? 'rotate-180' : ''}`} />
+          </button>
+        ) : null}
         {/* This is what handles the sidebar gap on desktop */}
         <div
           className={cn(
@@ -232,7 +256,7 @@ const Sidebar = React.forwardRef<
         />
         <div
           className={cn(
-            "duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear md:flex",
+            "duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear md:flex bg-white/20 backdrop-blur-lg border-r border-white/20 font-sans rounded-2xl shadow-2xl",
             side === "left"
               ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
               : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
@@ -242,11 +266,12 @@ const Sidebar = React.forwardRef<
               : "group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l",
             className
           )}
+          style={props.style}
           {...props}
         >
           <div
             data-sidebar="sidebar"
-            className="flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"
+            className="flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"
           >
             {children}
           </div>
@@ -298,8 +323,7 @@ const SidebarRail = React.forwardRef<
       onClick={toggleSidebar}
       title="Toggle Sidebar"
       className={cn(
-        "absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] hover:after:bg-sidebar-border group-data-[side=left]:-right-4 group-data-[side=right]:left-0 sm:flex",
-        "[[data-side=left]_&]:cursor-w-resize [[data-side=right]_&]:cursor-e-resize",
+        "absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] hover:after:bg-sidebar-border group-data-[side=left]_&]:cursor-w-resize group-data-[side=right]_&]:cursor-e-resize",
         "[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
         "group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full group-data-[collapsible=offcanvas]:hover:bg-sidebar",
         "[[data-side=left][data-collapsible=offcanvas]_&]:-right-2",
@@ -351,14 +375,20 @@ SidebarInput.displayName = "SidebarInput"
 const SidebarHeader = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div">
->(({ className, ...props }, ref) => {
+>(({ className, children, ...props }, ref) => {
   return (
     <div
       ref={ref}
       data-sidebar="header"
-      className={cn("flex flex-col gap-2 p-2", className)}
+      className={cn(
+        "flex items-center justify-between p-4 border-b border-white/20 bg-transparent rounded-t-2xl shadow-sm",
+        className
+      )}
       {...props}
-    />
+    >
+      <span className="text-lg font-bold text-black tracking-wide">BhutanAI</span>
+      {children && Array.isArray(children) ? children[1] : null}
+    </div>
   )
 })
 SidebarHeader.displayName = "SidebarHeader"
@@ -402,7 +432,7 @@ const SidebarContent = React.forwardRef<
       ref={ref}
       data-sidebar="content"
       className={cn(
-        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
+        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden p-4",
         className
       )}
       {...props}
@@ -553,6 +583,7 @@ const SidebarMenuButton = React.forwardRef<
   ) => {
     const Comp = asChild ? Slot : "button"
     const { isMobile, state } = useSidebar()
+    const isExpanded = state === 'expanded'
 
     const button = (
       <Comp

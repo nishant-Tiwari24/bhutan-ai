@@ -2,7 +2,12 @@ import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 
-const Navbar = () => {
+// Add hideBrand prop
+interface NavbarProps {
+  hideBrand?: boolean;
+}
+
+const Navbar = ({ hideBrand = false }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -53,9 +58,12 @@ const Navbar = () => {
           }}
           aria-label="BhutanAI"
         >
-          <span className="font-mono text-4xl font-bold text-gray-900 tracking-wider">
-            BhutanAI
-          </span>
+          {/* Conditionally render the brand */}
+          {!hideBrand && (
+            <span className="font-mono text-4xl font-bold text-gray-900 tracking-wider">
+              BhutanAI
+            </span>
+          )}
         </a>
 
         {/* Desktop Navigation */}

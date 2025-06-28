@@ -6,6 +6,18 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Mic, MicOff, Globe } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import {
+  SidebarProvider,
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarTrigger,
+  SidebarSeparator,
+  useSidebar,
+} from "../components/ui/sidebar";
 
 const DUMMY_MESSAGES = [
   { sender: "user", text: "Hello!" },
@@ -21,7 +33,7 @@ const LANGUAGES = [
 
 const VoiceAnimation = ({ isActive }: { isActive: boolean }) => {
   return (
-    <div className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 transition-all duration-700 ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-0 pointer-events-none'}`}>
+    <div className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 transition-all duration-700 ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-0 pointer-events-none'}${isActive ? ' pointer-events-none' : ''}`}>
       <div className="relative">
         {/* Main voice wave container */}
         <div className="relative w-48 h-48 flex items-center justify-center">
@@ -94,6 +106,18 @@ const VoiceAnimation = ({ isActive }: { isActive: boolean }) => {
           </div>
         </div>
       </div>
+    </div>
+  );
+};
+
+// Floating trigger component
+const FloatingSidebarTrigger = () => {
+  const { state, isMobile } = useSidebar();
+  // Only show when sidebar is collapsed (desktop) or closed (mobile)
+  if (state === "expanded" && !isMobile) return null;
+  return (
+    <div className="fixed top-4 left-4 z-[1000] pointer-events-auto">
+      <SidebarTrigger className="bg-white/80 hover:bg-white text-pulse-600 shadow-lg border border-pulse-200 pointer-events-auto" />
     </div>
   );
 };
@@ -222,109 +246,138 @@ const ChatbotPage = () => {
   };
 
   return (
-    <div 
-      className="flex flex-col min-h-screen"
-      style={{
-        backgroundImage: 'url("/Header-background.webp")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
-      }}
-    >
-      <Navbar />
-      <main className="flex-1 flex flex-col items-center justify-center px-4 py-8">
-        <Card className={`w-full max-w-2xl flex flex-col h-[70vh] shadow-2xl rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 transition-all duration-500 ${isVoiceActive ? 'opacity-40 scale-95' : 'opacity-100 scale-100'}`}>
-          {/* Language Selector */}
-          <div className="p-4 border-b border-white/20">
-            <div className="flex items-center gap-2">
-              <Globe className="text-white" size={20} />
-              <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-                <SelectTrigger className="w-48 bg-white/20 border-white/30 text-white">
-                  <SelectValue placeholder="Select Language" />
-                </SelectTrigger>
-                <SelectContent>
-                  {LANGUAGES.map((lang) => (
-                    <SelectItem key={lang.code} value={lang.code}>
-                      <span className="flex items-center gap-2">
-                        <span>{lang.flag}</span>
-                        <span>{lang.name}</span>
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
-            {messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
-              >
-                <div
-                  className={`px-4 py-2 rounded-2xl max-w-[70%] text-base font-medium shadow-lg backdrop-blur-sm ${
-                    msg.sender === "user"
-                      ? "bg-pulse-500/90 text-white rounded-br-none border border-pulse-400/30"
-                      : "bg-white/20 text-gray-900 rounded-bl-none border border-white/30"
-                  }`}
-                >
-                  {msg.text}
-                </div>
-              </div>
-            ))}
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="px-4 py-2 rounded-2xl bg-white/20 text-gray-900 rounded-bl-none border border-white/30 shadow-lg backdrop-blur-sm">
+    <SidebarProvider>
+      {/* Floating trigger for collapsed sidebar */}
+      <FloatingSidebarTrigger />
+      <div
+        className="fixed inset-0 w-full h-full z-0"
+        style={{
+          backgroundImage: 'url("/Header-background.webp")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+        }}
+      />
+      <div className="relative flex min-h-screen">
+        {/* Sidebar */}
+        <Sidebar side="left" collapsible="offcanvas" className="bg-white/10 backdrop-blur-md border-r border-white/20 z-10" >
+          <SidebarHeader className="flex items-center justify-between p-4 border-b border-white/20">
+            {/* <span className="text-lg font-bold text-white">BhutanAI</span> */}
+            <SidebarTrigger className="ml-2" />
+          </SidebarHeader>
+          <SidebarContent className="flex-1 p-2">
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton isActive tooltip="Chat">Chat</SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip="Language">Language</SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip="Laws">Laws</SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+            <SidebarSeparator className="my-4" />
+            {/* Add more sidebar content here if needed */}
+          </SidebarContent>
+        </Sidebar>
+        {/* Main Content */}
+        <div className="flex flex-1 min-h-screen z-10">
+          <div className="flex flex-col flex-1">
+            <Navbar hideBrand />
+            <main className="flex-1 flex items-center justify-center px-4 py-8">
+              <Card className={`w-full max-w-2xl flex flex-col h-[70vh] shadow-2xl rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 transition-all duration-500 ${isVoiceActive ? 'opacity-40 scale-95' : 'opacity-100 scale-100'}`}>
+                {/* Language Selector */}
+                <div className="p-4 border-b border-white/20">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-pulse-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-pulse-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="w-2 h-2 bg-pulse-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                    <Globe className="text-white" size={20} />
+                    <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
+                      <SelectTrigger className="w-48 bg-white/20 border-white/30 text-white">
+                        <SelectValue placeholder="Select Language" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {LANGUAGES.map((lang) => (
+                          <SelectItem key={lang.code} value={lang.code}>
+                            <span className="flex items-center gap-2">
+                              <span>{lang.flag}</span>
+                              <span>{lang.name}</span>
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
+                <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                  {messages.map((msg, idx) => (
+                    <div
+                      key={idx}
+                      className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+                    >
+                      <div
+                        className={`px-4 py-2 rounded-2xl max-w-[70%] text-base font-medium shadow-lg backdrop-blur-sm ${
+                          msg.sender === "user"
+                            ? "bg-pulse-500/90 text-white rounded-br-none border border-pulse-400/30"
+                            : "bg-white/20 text-gray-900 rounded-bl-none border border-white/30"
+                        }`}
+                      >
+                        {msg.text}
+                      </div>
+                    </div>
+                  ))}
+                  {isLoading && (
+                    <div className="flex justify-start">
+                      <div className="px-4 py-2 rounded-2xl bg-white/20 text-gray-900 rounded-bl-none border border-white/30 shadow-lg backdrop-blur-sm">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-pulse-400 rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-pulse-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                          <div className="w-2 h-2 bg-pulse-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
+                <form
+                  className="flex items-center gap-2 border-t border-white/20 px-4 py-3 bg-white/10 backdrop-blur-sm"
+                  onSubmit={handleSubmit}
+                >
+                  <Input
+                    className="flex-1 bg-white/20 border-white/30 text-gray-900 placeholder-gray-600 backdrop-blur-sm focus:bg-white/30"
+                    placeholder="Type your message..."
+                    value={input}
+                    onChange={e => setInput(e.target.value)}
+                    disabled={isLoading}
+                    autoFocus
+                  />
+                  <Button
+                    type="button"
+                    onClick={toggleVoice}
+                    disabled={isLoading}
+                    className={`rounded-full p-3 transition-all duration-300 ${
+                      isVoiceActive
+                        ? 'bg-red-500/90 text-white border border-red-400/30 hover:bg-red-600/90'
+                        : 'bg-pulse-500/90 text-white border border-pulse-400/30 hover:bg-pulse-600/90'
+                    } backdrop-blur-sm`}
+                  >
+                    {isVoiceActive ? <MicOff size={20} /> : <Mic size={20} />}
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isLoading || !input.trim()}
+                    className="bg-pulse-500/90 text-white rounded-full px-6 backdrop-blur-sm border border-pulse-400/30 hover:bg-pulse-600/90 disabled:opacity-50"
+                  >
+                    Send
+                  </Button>
+                </form>
+              </Card>
+            </main>
+            {/* Voice Animation Overlay */}
+            <VoiceAnimation isActive={isVoiceActive} />
           </div>
-          <form
-            className="flex items-center gap-2 border-t border-white/20 px-4 py-3 bg-white/10 backdrop-blur-sm"
-            onSubmit={handleSubmit}
-          >
-            <Input
-              className="flex-1 bg-white/20 border-white/30 text-gray-900 placeholder-gray-600 backdrop-blur-sm focus:bg-white/30"
-              placeholder="Type your message..."
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              disabled={isLoading}
-              autoFocus
-            />
-            <Button 
-              type="button"
-              onClick={toggleVoice}
-              disabled={isLoading}
-              className={`rounded-full p-3 transition-all duration-300 ${
-                isVoiceActive 
-                  ? 'bg-red-500/90 text-white border border-red-400/30 hover:bg-red-600/90' 
-                  : 'bg-pulse-500/90 text-white border border-pulse-400/30 hover:bg-pulse-600/90'
-              } backdrop-blur-sm`}
-            >
-              {isVoiceActive ? <MicOff size={20} /> : <Mic size={20} />}
-            </Button>
-            <Button 
-              type="submit" 
-              disabled={isLoading || !input.trim()}
-              className="bg-pulse-500/90 text-white rounded-full px-6 backdrop-blur-sm border border-pulse-400/30 hover:bg-pulse-600/90 disabled:opacity-50"
-            >
-              Send
-            </Button>
-          </form>
-        </Card>
-      </main>
-      <Footer />
-      
-      {/* Voice Animation Overlay */}
-      <VoiceAnimation isActive={isVoiceActive} />
-    </div>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 };
 
